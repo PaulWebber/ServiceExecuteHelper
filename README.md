@@ -14,3 +14,6 @@ Need to open a pwsh and run a command
 ```
 Start-Process powershell -ArgumentList "-noexit", "-noprofile", "-command &{Get-Location}"
 ```
+
+Need to give titles to spawned windows
+https://serverfault.com/questions/322928/how-do-i-add-a-title-to-a-powershell-window
