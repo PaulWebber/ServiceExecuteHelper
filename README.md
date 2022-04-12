@@ -9,3 +9,8 @@ Clearing Contents can be done with
 ```
 clear-content .\AfeNavigatorServer.log
 ```
+
+Need to open a pwsh and run a command
+```
+Start-Process powershell -ArgumentList "-noexit", "-noprofile", "-command &{Get-Location}"
+```
