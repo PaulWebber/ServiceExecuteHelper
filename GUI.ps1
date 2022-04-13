@@ -15,11 +15,12 @@ $main_form.Controls.Add($Label)
 $ComboBox = New-Object System.Windows.Forms.ComboBox
 $ComboBox.Width = 300
 #add contents
-$Exeservices = Get-Service | Where {$_.Name -like "Afe*" -or $_.Name -like "Aucerna*"}
-
+#$Exeservices = Get-Service | Where {$_.Name -like "Afe*" -or $_.Name -like "Aucerna*"}
+$Exeservices = (Get-cimInstance win32_service -filter "name like '%AFE%' or name like 'Aucerna%'").name
 Foreach ($Exeservice in $Exeservices)
 {
-    $ComboBox.Items.Add($Exeservice.DisplayName);
+    $cleaned = $Execservice.substring(6,10);
+    $ComboBox.Items.Add($Exeservice)
 }
 
 $ComboBox.Location  = New-Object System.Drawing.Point(60,10)
@@ -51,30 +52,6 @@ $Label9.Text = "Log will show here"
 $Label9.Location  = New-Object System.Drawing.Point(0,150)
 $Label9.AutoSize = $true
 $main_form.Controls.Add($Label9)
-
-$Label10 = New-Object System.Windows.Forms.Label
-$Label10.Text = "Show Log"
-$Label10.Location  = New-Object System.Drawing.Point(110,80)
-$Label10.AutoSize = $true
-$main_form.Controls.Add($Label10)
-
-$Checkbox4 = New-Object System.Windows.Forms.CheckBox
-$Checkbox4.Location  = New-Object System.Drawing.Point(170,80)
-$Checkbox4.AutoSize = $true
-$Checkbox4.Enabled = $true
-$main_form.Controls.Add($Checkbox4)
-
-$Label11 = New-Object System.Windows.Forms.Label
-$Label11.Text = "Clear Log"
-$Label11.Location  = New-Object System.Drawing.Point(110,100)
-$Label11.AutoSize = $true
-$main_form.Controls.Add($Label11)
-
-$Checkbox5 = New-Object System.Windows.Forms.CheckBox
-$Checkbox5.Location  = New-Object System.Drawing.Point(170,100)
-$Checkbox5.AutoSize = $true
-$Checkbox5.Enabled = $true
-$main_form.Controls.Add($Checkbox5)
 
 $Label8 = New-Object System.Windows.Forms.Label
 $Label8.Text = "Start"
@@ -117,11 +94,10 @@ $ComboBox.add_SelectedIndexChanged(
     {
         $selectedService = $ComboBox.SelectedItem
         $AFEServName = "*"+$selectedService.substring($selectedService.IndexOf('[')+1,$selectedService.IndexOf(']') - $selectedService.IndexOf('[')-1)+"*"
-        $installLocation = Get-WmiObject win32_service | ?{$_.Name -like $AFEServName} | select PathName
-        $tidyPath = split-path $installLocation -parent
+        $installLocation = (Get-cimInstance win32_service -filter "name = 'AFE Navigator Service [AFE2017]'").pathname
         $serviceDeets = Get-Service | Where {$_.DisplayName -like $AFEServName}
         $Label3.Text = $serviceDeets.Status
-        $Label5.Text = $tidyPath.substring(11,$tidyPath.length - 11)
+        $Label5.Text = split-path $installLocation -parent
         $Checkbox1.Checked = $false
         $Checkbox2.Checked = $false
         $Checkbox3.Checked = $false
@@ -175,6 +151,30 @@ $Button.Add_Click({
  # Restart-Service -DisplayName $AFEorEx
     }
 )
+
+#button
+$Button1 = New-Object System.Windows.Forms.Button
+$Button1.Location = New-Object System.Drawing.Size(110,80)
+$Button1.Size = New-Object System.Drawing.Size(80,23)
+$Button1.Text = "View Log"
+#button event
+$Button1.Add_Click({
+        write-host "hello"
+    }
+)
+$main_form.Controls.Add($Button1)
+
+#button
+$Button2 = New-Object System.Windows.Forms.Button
+$Button2.Location = New-Object System.Drawing.Size(110,100)
+$Button2.Size = New-Object System.Drawing.Size(80,23)
+$Button2.Text = "Clear Log"
+#button event
+$Button2.Add_Click({
+
+    }
+)
+$main_form.Controls.Add($Button2)
 
 $Checkbox2.Add_CheckStateChanged(
     {
